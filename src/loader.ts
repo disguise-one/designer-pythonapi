@@ -39,10 +39,10 @@ const generateJavaScriptCode = (moduleName: string, code: string, python: Python
 // Auto-generated from ${moduleName} by vite-plugin-designer-python-loader
 import { PythonApiClient } from '@disguise-one/designer-pythonapi';
 
-export const ${moduleName} = async (directorEndpoint) => {
+export const ${moduleName} = (directorEndpoint) => {
   const client = new PythonApiClient(directorEndpoint, "${moduleName}", ${JSON.stringify(code)});
 
-  const registration = await client.register();
+  const registration = client.register();
 
 ${python.functions.map(generateExecuteFunction).join('\n')}
 
@@ -63,9 +63,9 @@ import { PythonApiClient } from '@disguise-one/designer-pythonapi';
 
 export declare const ${moduleName}: (directorEndpoint: string) => {
 client: PythonApiClient;
-registration: AxiosResponse<any>;
+registration: Promise<AxiosResponse<any>>;
 ${python.functions
-  .map((func) => `  ${func.name}: (${func.parameters.map((p) => `${p}: any`).join(', ')}) => any;`)
+  .map((func) => `  ${func.name}: (${func.parameters.map((p) => `${p}: any`).join(', ')}) => Promise<any>;`)
   .join('\n')}
 };
 `;
@@ -74,9 +74,12 @@ ${python.functions
 export const designerPythonLoader = (options: LoaderOptions = {}) => {
   options = { ...DEFAULT_LOADER_OPTIONS, ...options };
 
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  const parseScriptPath = path.resolve(__dirname, 'python_support/parse.py');
+  // Define __dirname for both CommonJS and ES module compatibility
+  const localDirname: string = typeof __dirname !== 'undefined'
+    ? __dirname // CommonJS
+    : path.dirname(fileURLToPath(import.meta.url)); // ES module
+
+  const parseScriptPath = path.resolve(localDirname, 'python_support/parse.py');
 
   const parsePython = (code: string) => {
     const parsedOutput = execSync(`python3 ${parseScriptPath}`, { input: code }).toString();

@@ -37,8 +37,3 @@ export class PythonApiClient {
 		return response.data;
 	}
 }
-
-export default function apiClient() {
-	// Placeholder implementation
-	console.log('API Client initialized');
-}

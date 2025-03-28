@@ -1,7 +1,5 @@
 {
 	"compilerOptions": {
-		"target": "ES6",
-		"module": "esnext",
 		"outDir": "dist",
 		"strict": true,
 		"esModuleInterop": true,
