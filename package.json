@@ -1,23 +1,42 @@
 {
-	"name": "designer-pythonapi",
+	"name": "@disguise-one/designer-pythonapi",
 	"version": "1.0.0",
 	"description": "A TypeScript library to interact with the Python API.",
-	"main": "dist/apiClient.js",
-	"types": "dist/apiClient.d.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"type": "module",
 	"scripts": {
-		"build": "tsc",
+		"build": "rollup -c",
 		"start": "node dist/apiClient.js",
-		"test": "jest"
+		"test": "vitest"
+	},
+	"files": [
+		"dist/"
+	],
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.js"
+		},
+		"./loader": {
+			"import": "./dist/loader.js",
+			"types": "./dist/loader.d.ts"
+		}
 	},
 	"dependencies": {
-		"axios": "^1.4.0"
+		"axios": "^1.4.0",
+		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
-		"@types/jest": "^29.5.14",
-		"jest": "^29.0.0",
-		"ts-jest": "^29.0.0",
+		"@rollup/plugin-commonjs": "^25.0.8",
+		"@rollup/plugin-node-resolve": "^15.3.1",
+		"@rollup/plugin-typescript": "^10.0.1",
+		"rollup": "^3.29.0",
+		"rollup-plugin-copy": "^3.5.0",
+		"rollup-plugin-dts": "^5.3.0",
 		"typescript": "^5.2.2",
-		"vite": "^6.2.3"
+		"vite": "^6.2.3",
+		"vitest": "^0.34.0"
 	},
 	"author": "",
 	"license": "MIT"

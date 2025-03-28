@@ -7,16 +7,17 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Run jest",
-            "runtimeExecutable": "jest",
+            "name": "Run vitest",
+            "runtimeExecutable": "vitest",
             "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
             "args": []
         },
         {
             "name": "Debug parser",
             "type": "debugpy",
             "request": "launch",
-            "program": "python_support/parse.py",
+            "program": "src/python_support/parse.py",
             "console": "integratedTerminal",
             "args": "${command:pickArgs}"
         }
