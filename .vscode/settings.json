@@ -1,0 +1,10 @@
+{
+  "[typescript]": {
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+}
