@@ -1,5 +1,22 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
+export interface RpcStatus {
+  code: number;
+  message: string;
+  details: any[];
+}
+
+export interface ExecuteResponse {
+  status: RpcStatus;
+  d3Log: string;
+  pythonLog: string;
+  returnValue: string;
+}
+
+export interface RegisterResponse {
+  status: RpcStatus;
+}
+
 export class PythonApiClient {
 	private client: AxiosInstance;
 
@@ -18,7 +35,7 @@ export class PythonApiClient {
 
   
 	async register() {
-    return await this.client.post('registermodule', {
+    return await this.client.post<RegisterResponse>('registermodule', {
       moduleName: this.moduleName,
       contents: this.sourceCode
     });
@@ -29,8 +46,8 @@ export class PythonApiClient {
 	 * @param moduleName - The name of the module to execute the script in.
 	 * @param script - The Python script to execute.
 	 */
-	async executeScript(script: string): Promise<any> {
-		const response = await this.client.post('execute', {
+	async executeScript(script: string) {
+		const response = await this.client.post<ExecuteResponse>('execute', {
 			moduleName: this.moduleName,
 			script,
 		});
