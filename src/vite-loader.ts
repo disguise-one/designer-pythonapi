@@ -4,7 +4,21 @@ import { fileURLToPath } from 'url';
 import * as fs from 'fs';
 
 interface LoaderOptions {
+  /**
+   * Whether to generate JavaScript files from the Python modules.
+   * If set to `true`, the loader will write the generated JavaScript code
+   * to a `.js` file alongside the Python module.
+   * 
+   * Default: `false`
+   */
   generateJavascript?: boolean;
+
+  /**
+   * Whether to generate TypeScript type definition files (`.d.ts`) for the Python modules.
+   * If set to `true`, the loader will create type definitions based on the parsed Python functions.
+   * 
+   * Default: `true`
+   */
   generateTypeDefinitions?: boolean;
 }
 
