@@ -20,10 +20,10 @@
 			"require": "./dist/index.js",
 			"types": "./dist/index.d.ts"
 		},
-		"./loader": {
-			"import": "./dist/loader.js",
-			"require": "./dist/loader.js",
-			"types": "./dist/loader.d.ts"
+		"./vite-loader": {
+			"import": "./dist/vite-loader.js",
+			"require": "./dist/vite-loader.js",
+			"types": "./dist/vite-loader.d.ts"
 		}
 	},
 	"dependencies": {

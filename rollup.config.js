@@ -21,9 +21,9 @@ export default [
 		],
 	},
 	{
-		input: 'src/loader.ts',
+		input: 'src/vite-loader.ts',
 		output: {
-			file: 'dist/loader.js',
+			file: 'dist/vite-loader.js',
 			format: 'es',
 		},
 		plugins: [
@@ -47,9 +47,9 @@ export default [
 		plugins: [dts()],
 	},
 	{
-		input: 'dist/types/loader.d.ts',
+		input: 'dist/types/vite-loader.d.ts',
 		output: {
-			file: 'dist/loader.d.ts',
+			file: 'dist/vite-loader.d.ts',
 			format: 'es',
 		},
 		plugins: [dts()],

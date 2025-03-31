@@ -1,4 +1,4 @@
-import { designerPythonLoader } from '../src/loader';
+import { designerPythonLoader } from '../src/vite-loader';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
