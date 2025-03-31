@@ -61,12 +61,17 @@ const generateTypeDefinitions = (moduleName: string, python: PythonModule) => {
 import { AxiosResponse } from 'axios';
 import { PythonApiClient, ExecuteResponse, RegisterResponse } from '@disguise-one/designer-pythonapi';
 
-export declare const ${moduleName}: (directorEndpoint: string) => {
-  client: PythonApiClient;
-  registration: Promise<AxiosResponse<RegisterResponse>>;
 ${python.functions
-  .map((func) => `  ${func.name}: (${func.parameters.map((p) => `${p}: any`).join(', ')}) => Promise<ExecuteResponse>;`)
-  .join('\n')}
+  .map((func) => `export type ${func.name}Function = (${func.parameters.map((p) => `${p}: any`).join(', ')}) => Promise<ExecuteResponse>;`)
+  .join('\n')
+}
+
+export declare const ${moduleName}: (directorEndpoint: string) => {
+  client: PythonApiClient,
+  registration: Promise<AxiosResponse<RegisterResponse>>,
+${python.functions
+  .map((func) => `  ${func.name}: ${func.name}Function`)
+  .join(',\n')}
 };
 `;
 };

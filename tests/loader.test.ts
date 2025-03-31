@@ -60,11 +60,14 @@ export const example = (directorEndpoint) => {
 import { AxiosResponse } from 'axios';
 import { PythonApiClient, ExecuteResponse, RegisterResponse } from '@disguise-one/designer-pythonapi';
 
+export type addFunction = (a: any, b: any) => Promise<ExecuteResponse>;
+export type subtractFunction = (a: any, b: any) => Promise<ExecuteResponse>;
+
 export declare const example: (directorEndpoint: string) => {
-  client: PythonApiClient;
-  registration: Promise<AxiosResponse<RegisterResponse>>;
-  add: (a: any, b: any) => Promise<ExecuteResponse>;
-  subtract: (a: any, b: any) => Promise<ExecuteResponse>;
+  client: PythonApiClient,
+  registration: Promise<AxiosResponse<RegisterResponse>>,
+  add: addFunction,
+  subtract: subtractFunction
 };
 `);
   });
