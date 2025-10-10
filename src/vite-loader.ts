@@ -101,7 +101,7 @@ export const designerPythonLoader = (options: LoaderOptions = {}) => {
   const parseScriptPath = path.resolve(localDirname, 'python_support/parse.py');
 
   const parsePython = (code: string) => {
-    const parsedOutput = execSync(`python3 ${parseScriptPath}`, { input: code }).toString();
+    const parsedOutput = execSync(`python3 "${parseScriptPath}"`, { input: code }).toString();
 
     const parsedJson = JSON.parse(parsedOutput);
     if (parsedJson.error) {
