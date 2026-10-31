@@ -20,7 +20,7 @@ def extract_exported_functions(tree: ast.Module, source: str) -> List[Dict[str, 
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id == "__all__":
                     if isinstance(node.value, ast.List):
-                        exported = {elt.s for elt in node.value.elts if isinstance(elt, ast.Str)}
+                        exported = {elt.value for elt in node.value.elts if isinstance(elt, ast.Constant) and isinstance(elt.value, str)}
 
     for node in tree.body:
         # Collect function definitions
