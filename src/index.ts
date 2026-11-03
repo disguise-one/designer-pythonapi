@@ -1,1 +1,1 @@
-export { PythonApiClient, RpcStatus, ExecuteResponse, RegisterResponse } from './apiClient';
+export { PythonApiClient, PythonApiClientOptions, RpcStatus, ExecuteResponse, RegisterResponse } from './apiClient';

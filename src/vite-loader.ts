@@ -53,8 +53,8 @@ const generateJavaScriptCode = (moduleName: string, code: string, python: Python
 // Auto-generated from ${moduleName} by vite-plugin-designer-python-loader
 import { PythonApiClient } from '@disguise-one/designer-pythonapi';
 
-export const ${moduleName} = (directorEndpoint) => {
-  const client = new PythonApiClient(directorEndpoint, "${moduleName}", ${JSON.stringify(code)});
+export const ${moduleName} = (directorEndpoint, options) => {
+  const client = new PythonApiClient(directorEndpoint, "${moduleName}", ${JSON.stringify(code)}, options);
 
   const registration = client.register();
 
@@ -73,14 +73,14 @@ const generateTypeDefinitions = (moduleName: string, python: PythonModule) => {
   return `\
 // Auto-generated from ${moduleName} by vite-plugin-designer-python-loader
 import { AxiosResponse } from 'axios';
-import { PythonApiClient, ExecuteResponse, RegisterResponse } from '@disguise-one/designer-pythonapi';
+import { PythonApiClient, PythonApiClientOptions, ExecuteResponse, RegisterResponse } from '@disguise-one/designer-pythonapi';
 
 ${python.functions
   .map((func) => `export type ${func.name}Function = (${func.parameters.map((p) => `${p}: any`).join(', ')}) => Promise<ExecuteResponse>;`)
   .join('\n')
 }
 
-export declare const ${moduleName}: (directorEndpoint: string) => {
+export declare const ${moduleName}: (directorEndpoint: string, options?: PythonApiClientOptions) => {
   client: PythonApiClient,
   registration: Promise<AxiosResponse<RegisterResponse>>,
 ${python.functions
