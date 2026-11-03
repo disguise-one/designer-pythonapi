@@ -31,17 +31,23 @@ export const example = (directorEndpoint) => {
 
   const registration = client.register();
 
-  const add = (a, b) => {
+  // Calls wait for registration, and register again if it failed.
+  let registered = registration;
+  const ready = () => registered.catch(() => (registered = client.register()));
+
+  const add = async (a, b) => {
     const script = \`return add(\${JSON.stringify(a)}, \${JSON.stringify(b)})\`;
 
-    // Execute the script using the PythonApiClient
+    // Execute the script using the PythonApiClient, once the module is registered
+    await ready();
     return client.executeScript(script);
   };
 
-  const subtract = (a, b) => {
+  const subtract = async (a, b) => {
     const script = \`return subtract(\${JSON.stringify(a)}, \${JSON.stringify(b)})\`;
 
-    // Execute the script using the PythonApiClient
+    // Execute the script using the PythonApiClient, once the module is registered
+    await ready();
     return client.executeScript(script);
   };
 
@@ -96,6 +102,80 @@ def subtract(a, b):
 
     // Clean up
     fs.unlinkSync(tempFilePath);
+  });
+
+  // Loads the generated module with a stand-in PythonApiClient, whose
+  // registrations wait for the test to resolve or reject them.
+  const loadWithStandInClient = async () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'loader-calls-'));
+    fs.writeFileSync(path.join(tempDir, 'client.mjs'), `\
+export const events = [];
+export const registrations = [];
+export class PythonApiClient {
+  register() {
+    events.push('register');
+    return new Promise((resolve, reject) => registrations.push({ resolve, reject }));
+  }
+  async executeScript(script) {
+    events.push(script);
+    return { returnValue: '3' };
+  }
+}`, 'utf8');
+    const result = loader.transform(`\
+__all__ = ["add"]
+def add(a, b):
+  return a + b`, 'example.py');
+    const code = (result?.code || '').replace("'@disguise-one/designer-pythonapi'", "'./client.mjs'");
+    fs.writeFileSync(path.join(tempDir, 'example.mjs'), code, 'utf8');
+    const client = await import(path.join(tempDir, 'client.mjs'));
+    const { example } = await import(path.join(tempDir, 'example.mjs'));
+    fs.rmSync(tempDir, { recursive: true, force: true });
+    return { module: example('localhost'), events: client.events, registrations: client.registrations };
+  };
+  const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+  it('should wait for the module to be registered before calling it', async () => {
+    const { module, events, registrations } = await loadWithStandInClient();
+
+    const call = module.add(1, 2);
+    await settle();
+    expect(events).toEqual(['register']);
+
+    registrations[0].resolve({ status: { code: 0 } });
+    expect(await call).toEqual({ returnValue: '3' });
+    expect(events).toEqual(['register', 'return add(1, 2)']);
+  });
+
+  it('should register the module again when registering failed', async () => {
+    const { module, events, registrations } = await loadWithStandInClient();
+
+    // The first registration fails, so the call registers again and waits for that.
+    const first = module.add(1, 2);
+    registrations[0].reject(new Error('Network Error'));
+    await settle();
+    expect(events).toEqual(['register', 'register']);
+    registrations[1].resolve({ status: { code: 0 } });
+    expect(await first).toEqual({ returnValue: '3' });
+
+    // Once registered, calls don't register again.
+    await module.add(2, 3);
+    expect(events).toEqual(['register', 'register', 'return add(1, 2)', 'return add(2, 3)']);
+  });
+
+  it('should fail a call whose registration failed again, and try once more on the next', async () => {
+    const { module, events, registrations } = await loadWithStandInClient();
+
+    const first = module.add(1, 2);
+    registrations[0].reject(new Error('Network Error'));
+    await settle();
+    registrations[1].reject(new Error('Network Error'));
+    await expect(first).rejects.toThrow('Network Error');
+
+    const second = module.add(1, 2);
+    await settle();
+    expect(events).toEqual(['register', 'register', 'register']);
+    registrations[2].resolve({ status: { code: 0 } });
+    expect(await second).toEqual({ returnValue: '3' });
   });
 
   it('should define a valid Vite config with the plugin', async () => {
