@@ -38,10 +38,11 @@ interface PythonModule {
 
 const generateExecuteFunction = (func: FunctionDefinition) => {
   return `\
-  const ${func.name} = (${func.parameters.join(', ')}) => {
+  const ${func.name} = async (${func.parameters.join(', ')}) => {
     const script = \`return ${func.name}(${func.parameters.map((param) => `\${JSON.stringify(${param})}`).join(', ')})\`;
 
-    // Execute the script using the PythonApiClient
+    // Execute the script using the PythonApiClient, once the module is registered
+    await ready();
     return client.executeScript(script);
   };
 `;
@@ -57,6 +58,10 @@ export const ${moduleName} = (directorEndpoint) => {
   const client = new PythonApiClient(directorEndpoint, "${moduleName}", ${JSON.stringify(code)});
 
   const registration = client.register();
+
+  // calls wait for registration, and register again if it failed.
+  let registered = registration;
+  const ready = () => registered.catch(() => (registered = client.register()));
 
 ${python.functions.map(generateExecuteFunction).join('\n')}
 
