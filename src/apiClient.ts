@@ -17,6 +17,11 @@ export interface RegisterResponse {
   status: RpcStatus;
 }
 
+export interface PythonApiClientOptions {
+  /** How long to wait for Designer to answer a request before giving up on it, in milliseconds. Defaults to no limit. */
+  timeout?: number;
+}
+
 export class PythonApiClient {
 	private client: AxiosInstance;
 
@@ -24,11 +29,13 @@ export class PythonApiClient {
 	 * Registers a Python module with the server.
 	 * @param moduleName - The name of the module to register.
 	 * @param sourceCode - The Python source code for the module.
+	 * @param options - Optional settings for the requests to Designer.
 	 */
-	constructor(endpoint: string, private moduleName: string, private sourceCode: string) {
+	constructor(endpoint: string, private moduleName: string, private sourceCode: string, options: PythonApiClientOptions = {}) {
 		this.client = axios.create({
 			baseURL: `http://${endpoint}/api/session/python/`,
 			headers: { 'Content-Type': 'application/json' },
+			timeout: options.timeout,
 		});
 
 	}

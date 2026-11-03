@@ -26,8 +26,8 @@ def subtract(a, b):
 // Auto-generated from example by vite-plugin-designer-python-loader
 import { PythonApiClient } from '@disguise-one/designer-pythonapi';
 
-export const example = (directorEndpoint) => {
-  const client = new PythonApiClient(directorEndpoint, "example", "__all__ = [\\\"add\\\", \\\"subtract\\\"]\\ndef add(a, b):\\n  return a + b\\n  \\ndef subtract(a, b):\\n  return a - b");
+export const example = (directorEndpoint, options) => {
+  const client = new PythonApiClient(directorEndpoint, "example", "__all__ = [\\\"add\\\", \\\"subtract\\\"]\\ndef add(a, b):\\n  return a + b\\n  \\ndef subtract(a, b):\\n  return a - b", options);
 
   const registration = client.register();
 
@@ -58,12 +58,12 @@ export const example = (directorEndpoint) => {
     expect(result?.meta.typeDefinitions).toEqual(`\
 // Auto-generated from example by vite-plugin-designer-python-loader
 import { AxiosResponse } from 'axios';
-import { PythonApiClient, ExecuteResponse, RegisterResponse } from '@disguise-one/designer-pythonapi';
+import { PythonApiClient, PythonApiClientOptions, ExecuteResponse, RegisterResponse } from '@disguise-one/designer-pythonapi';
 
 export type addFunction = (a: any, b: any) => Promise<ExecuteResponse>;
 export type subtractFunction = (a: any, b: any) => Promise<ExecuteResponse>;
 
-export declare const example: (directorEndpoint: string) => {
+export declare const example: (directorEndpoint: string, options?: PythonApiClientOptions) => {
   client: PythonApiClient,
   registration: Promise<AxiosResponse<RegisterResponse>>,
   add: addFunction,

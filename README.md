@@ -105,6 +105,14 @@ const result = await client.executeScript('return add(1, 2)');
 console.log(result.returnValue); // Output: 3
 ```
 
+By default a request waits for Designer's answer however long it takes. To give up after a while, pass a `timeout` in milliseconds, and a request with no answer by then fails with axios's `ECONNABORTED` error:
+
+```ts
+const client = new PythonApiClient('localhost:8000', 'example', source, { timeout: 30000 });
+```
+
+A module imported through the loader takes the same options: `myfile('director:port', { timeout: 30000 })`.
+
 ## Development
 
 ### Building the Project
